@@ -11,10 +11,15 @@ import {
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { trace } from '@opentelemetry/api';
+import { Span, Tracer } from '@opentelemetry/sdk-trace-node';
 
 @Controller('tasks')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  private tracer;
+  constructor(private readonly taskService: TaskService) {
+    this.tracer = trace.getTracer('get-task');
+  }
 
   @Post()
   @HttpCode(201)
@@ -24,7 +29,10 @@ export class TaskController {
 
   @Get()
   async findAll() {
-    return this.taskService.findAll();
+    const span = this.tracer.startSpan('get-tasks');
+    const response = await this.taskService.findAll();
+    span.end();
+    return response;
   }
 
   @Get(':id')
@@ -33,8 +41,15 @@ export class TaskController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(+id, updateTaskDto);
+  async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+    return await this.tracer.startActiveSpan(
+      'update-task',
+      async (parentSpan: Span) => {
+        const response = await this.taskService.update(+id, updateTaskDto);
+        parentSpan.end();
+        return response;
+      },
+    );
   }
 
   @Patch(':id/archive')
