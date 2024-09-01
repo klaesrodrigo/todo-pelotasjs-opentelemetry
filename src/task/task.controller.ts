@@ -11,14 +11,16 @@ import {
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { trace } from '@opentelemetry/api';
-import { Span, Tracer } from '@opentelemetry/sdk-trace-node';
+import { metrics, trace } from '@opentelemetry/api';
+import { Span } from '@opentelemetry/sdk-trace-node';
 
 @Controller('tasks')
 export class TaskController {
   private tracer;
+  private meter;
   constructor(private readonly taskService: TaskService) {
     this.tracer = trace.getTracer('get-task');
+    this.meter = metrics.getMeter('TLC', '0.1.0');
   }
 
   @Post()
@@ -55,6 +57,8 @@ export class TaskController {
   @Patch(':id/archive')
   @HttpCode(204)
   archive(@Param('id') id: string) {
+    const counter = this.meter.createCounter('archive_task');
+    counter.add(1);
     return this.taskService.archive(+id);
   }
 
