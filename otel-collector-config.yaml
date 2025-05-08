@@ -8,26 +8,31 @@ receivers:
 
 processors:
   batch:
+    timeout: 1s
+    send_batch_size: 1024
 
 exporters:
-  debug:
-
   prometheus:
-    endpoint: '0.0.0.0:8889'
-
-  otlp:
-    endpoint: jaeger:4317
+    endpoint: "0.0.0.0:8889"
+    namespace: "otel"
+    send_timestamps: true
+    metric_expiration: 180m
+    resource_to_telemetry_conversion:
+      enabled: true
+  jaeger:
+    endpoint: jaeger:14250
     tls:
       insecure: true
+  logging:
+    verbosity: detailed
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [debug, otlp]
+      processors: [batch]
+      exporters: [jaeger, logging]
     metrics:
       receivers: [otlp]
-      exporters: [debug, prometheus]
-    logs:
-      receivers: [otlp]
-      exporters: [debug]
+      processors: [batch]
+      exporters: [prometheus, logging]

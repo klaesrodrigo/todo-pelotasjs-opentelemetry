@@ -66,7 +66,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(status) (task_status_count)",
+          "expr": "sum by(status) (task_status_count_total)",
           "interval": "",
           "legendFormat": "{{status}}",
           "refId": "A"
@@ -158,7 +158,7 @@
       "pluginVersion": "7.4.0",
       "targets": [
         {
-          "expr": "sum by(userId) (user_activity_count)",
+          "expr": "sum by(userId) (user_activity_count_total)",
           "instant": false,
           "interval": "",
           "legendFormat": "Usuário {{userId}}",
@@ -214,7 +214,7 @@
       "pluginVersion": "7.4.0",
       "targets": [
         {
-          "expr": "sum by(status) (task_status_count)",
+          "expr": "sum by(status) (task_status_count_total)",
           "interval": "",
           "legendFormat": "{{status}}",
           "refId": "A"

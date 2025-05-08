@@ -66,7 +66,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(task_transfers_count)",
+          "expr": "sum(task_transfers_count_total)",
           "interval": "",
           "legendFormat": "Total de Transferências",
           "refId": "A"
@@ -159,7 +159,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(fromUserId) (task_transfers_count)",
+          "expr": "sum by(fromUserId) (task_transfers_count_total)",
           "interval": "",
           "legendFormat": "De: Usuário {{fromUserId}}",
           "refId": "A"
@@ -252,7 +252,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(toUserId) (task_transfers_count)",
+          "expr": "sum by(toUserId) (task_transfers_count_total)",
           "interval": "",
           "legendFormat": "Para: Usuário {{toUserId}}",
           "refId": "A"
