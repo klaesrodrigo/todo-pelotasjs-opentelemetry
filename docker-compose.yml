@@ -44,8 +44,26 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
-    depends_on:
+          depends_on:
       - prometheus
+      - mysql
+      - jaeger
+    networks:
+      - otel-network
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=todo
+      - MYSQL_USER=todo
+      - MYSQL_PASSWORD=todo123
+    command: --default-authentication-plugin=mysql_native_password
     networks:
       - otel-network
 
@@ -55,3 +73,4 @@ networks:
 
 volumes:
   grafana-storage:
+  mysql-data:
