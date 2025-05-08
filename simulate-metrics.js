@@ -80,6 +80,44 @@ async function runSimulation() {
     }
   }, 15000); // a cada 15 segundos
   
+  // Simular transferências de tarefas
+  const transferInterval = setInterval(async () => {
+    try {
+      // Buscar tarefas existentes
+      const response = await axios.get(`${BASE_URL}/tasks`);
+      const tasks = response.data;
+      
+      if (tasks.length > 0) {
+        // Escolher tarefa aleatória para transferir (não arquivada)
+        const availableTasks = tasks.filter(task => !task.is_archived);
+        
+        if (availableTasks.length > 0) {
+          const randomIndex = Math.floor(Math.random() * availableTasks.length);
+          const taskToTransfer = availableTasks[randomIndex];
+          
+          // Escolher um usuário diferente do atual
+          let newUserId;
+          do {
+            newUserId = USERS[Math.floor(Math.random() * USERS.length)];
+          } while (newUserId === taskToTransfer.userId);
+          
+          console.log(`Transferindo tarefa ${taskToTransfer.id} do usuário ${taskToTransfer.userId} para o usuário ${newUserId}`);
+          
+          await axios.patch(`${BASE_URL}/tasks/${taskToTransfer.id}/transfer`, {
+            newUserId,
+            message: `Transferência automática para o usuário ${newUserId}`
+          });
+          
+          // Consultar o histórico da tarefa
+          console.log(`Consultando histórico da tarefa ${taskToTransfer.id}`);
+          await axios.get(`${BASE_URL}/tasks/${taskToTransfer.id}/history`);
+        }
+      }
+    } catch (err) {
+      console.error('Erro na transferência de tarefa:', err.message);
+    }
+  }, 20000); // a cada 20 segundos
+  
   // Visualização de estatísticas
   const statsInterval = setInterval(async () => {
     try {
@@ -96,6 +134,7 @@ async function runSimulation() {
     clearInterval(userSimInterval);
     clearInterval(taskCreateInterval);
     clearInterval(statusUpdateInterval);
+    clearInterval(transferInterval);
     clearInterval(statsInterval);
     
     console.log('Simulação finalizada com sucesso!');
