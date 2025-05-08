@@ -37,6 +37,22 @@ export class TaskController {
     return response;
   }
 
+  @Get('stats')
+  async getStats() {
+    const span = this.tracer.startSpan('get-task-stats');
+    const response = await this.taskService.getStats();
+    span.end();
+    return response;
+  }
+
+  @Get('user/:userId')
+  findByUserId(@Param('userId') userId: string) {
+    const span = this.tracer.startSpan('get-tasks-by-user');
+    const response = this.taskService.findByUserId(+userId);
+    span.end();
+    return response;
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.taskService.findOne(+id);

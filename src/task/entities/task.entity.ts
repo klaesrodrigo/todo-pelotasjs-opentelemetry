@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User } from '../../user/entities/user.entity';
 
 export enum TaskStatus {
   OPEN = 'OPEN',
@@ -37,4 +39,10 @@ export class Task {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @ManyToOne(() => User, user => user.tasks)
+  user: User;
+
+  @Column({ nullable: true })
+  userId: number;
 }

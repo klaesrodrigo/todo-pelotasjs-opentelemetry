@@ -3,7 +3,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskRepository } from './task.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Task } from './entities/task.entity';
+import { Task, TaskStatus } from './entities/task.entity';
 import { trace } from '@opentelemetry/api';
 
 @Injectable()
@@ -21,11 +21,49 @@ export class TaskService {
   }
 
   async findAll() {
-    return this.taskRepository.find();
+    return this.taskRepository.find({
+      relations: ['user'],
+    });
   }
 
   findOne(id: number) {
-    return this.taskRepository.findOneBy({ id });
+    return this.taskRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+  }
+
+  async findByUserId(userId: number) {
+    return this.taskRepository.find({
+      where: { userId },
+      relations: ['user'],
+    });
+  }
+
+  async getStats() {
+    const allTasks = await this.taskRepository.find();
+    
+    const totalTasks = allTasks.length;
+    const openTasks = allTasks.filter(task => task.status === TaskStatus.OPEN).length;
+    const inProgressTasks = allTasks.filter(task => task.status === TaskStatus.IN_PROGRESS).length;
+    const doneTasks = allTasks.filter(task => task.status === TaskStatus.DONE).length;
+    const archivedTasks = allTasks.filter(task => task.is_archived).length;
+    
+    const tasksPerUser = await this.taskRepository
+      .createQueryBuilder('task')
+      .select('task.userId', 'userId')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('task.userId')
+      .getRawMany();
+    
+    return {
+      totalTasks,
+      openTasks,
+      inProgressTasks,
+      doneTasks,
+      archivedTasks,
+      tasksPerUser
+    };
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
