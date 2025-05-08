@@ -13,6 +13,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { metrics, trace } from '@opentelemetry/api';
 import { Span } from '@opentelemetry/sdk-trace-node';
+import { TransferTaskDto } from './dto/transfer-task.dto';
 
 @Controller('tasks')
 export class TaskController {
@@ -58,6 +59,11 @@ export class TaskController {
     return this.taskService.findOne(+id);
   }
 
+  @Get(':id/history')
+  getTaskHistory(@Param('id') id: string) {
+    return this.taskService.getTaskHistory(+id);
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return await this.tracer.startActiveSpan(
@@ -68,6 +74,17 @@ export class TaskController {
         return response;
       },
     );
+  }
+
+  @Patch(':id/transfer')
+  async transferTask(
+    @Param('id') id: string, 
+    @Body() transferTaskDto: TransferTaskDto
+  ) {
+    // Em um cenário real, o currentUserId viria do sistema de autenticação
+    const currentUserId = 1; // Simulando o usuário atual para fins de exemplo
+    
+    return this.taskService.transferTask(+id, transferTaskDto, currentUserId);
   }
 
   @Patch(':id/archive')
