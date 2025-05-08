@@ -1,0 +1,163 @@
+{
+  "info": {
+    "name": "Todo API - PelotasJS",
+    "description": "Coleção de API para o aplicativo de tarefas com OpenTelemetry",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Tarefas",
+      "description": "Endpoints relacionados às tarefas",
+      "item": [
+        {
+          "name": "Listar todas as tarefas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:3000/tasks",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["tasks"]
+            },
+            "description": "Recupera todas as tarefas cadastradas"
+          },
+          "response": []
+        },
+        {
+          "name": "Obter tarefa por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:3000/tasks/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["tasks", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID da tarefa"
+                }
+              ]
+            },
+            "description": "Recupera uma tarefa específica pelo ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar nova tarefa",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "http://localhost:3000/tasks",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["tasks"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nova tarefa\",\n  \"description\": \"Descrição da nova tarefa\",\n  \"due_date\": \"2025-12-31T00:00:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Cria uma nova tarefa"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar tarefa",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "http://localhost:3000/tasks/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["tasks", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID da tarefa"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Tarefa atualizada\",\n  \"description\": \"Descrição atualizada\",\n  \"status\": \"IN_PROGRESS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Atualiza uma tarefa existente"
+          },
+          "response": []
+        },
+        {
+          "name": "Arquivar tarefa",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "http://localhost:3000/tasks/:id/archive",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["tasks", ":id", "archive"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID da tarefa"
+                }
+              ]
+            },
+            "description": "Arquiva uma tarefa existente"
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir tarefa",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:3000/tasks/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["tasks", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "ID da tarefa"
+                }
+              ]
+            },
+            "description": "Remove uma tarefa"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+} 
